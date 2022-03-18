@@ -19,7 +19,7 @@ public class ProductDatabase {
 		barcodedProducts = new HashMap<>();
 	}
 
-	/*
+	/**
 	 * Registers the given barcoded products into the database.
 	 * 
 	 * @param	products	Array of BarcodedProduct's to register into the database.
@@ -30,7 +30,7 @@ public class ProductDatabase {
 		}
 	}
 	
-	/*
+	/**
 	 * Looks up a product with the given barcode and returns it.
 	 * 
 	 *  @param 	barcode Barcode of the product to look up.
@@ -41,7 +41,7 @@ public class ProductDatabase {
 		return barcodedProducts.get(barcode);
 	}
 	
-	/*
+	/**
 	 * Returns the number of products in the database.
 	 * 
 	 * @return	Number of products registered in the database.
@@ -50,7 +50,7 @@ public class ProductDatabase {
 		return barcodedProducts.size();
 	}
 	
-	/*
+	/**
 	 * Clears the database of all products
 	 */
 	public void clearDatabase() {
