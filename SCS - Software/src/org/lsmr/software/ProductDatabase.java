@@ -36,8 +36,24 @@ public class ProductDatabase {
 	 *  @param 	barcode Barcode of the product to look up.
 	 *  @return			Product that matches the specified barcode or null if the not in the database.
 	 */
-	public void LookupItemViaBarcode(Barcode barcode) {
+	public BarcodedProduct LookupItemViaBarcode(Barcode barcode) {
 		// Handle case where the barcode is invalid/doesn't map to a product?
-		barcodedProducts.get(barcode);
+		return barcodedProducts.get(barcode);
+	}
+	
+	/*
+	 * Returns the number of products in the database.
+	 * 
+	 * @return	Number of products registered in the database.
+	 */
+	public int getNumberOfProducts() {
+		return barcodedProducts.size();
+	}
+	
+	/*
+	 * Clears the database of all products
+	 */
+	public void clearDatabase() {
+		barcodedProducts.clear();
 	}
 }
