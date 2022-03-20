@@ -60,9 +60,39 @@ public class ShoppingCartReceiptPrinterTest {
 		
 		String receipt = station.printer.removeReceipt();
 		
-		System.out.print(receipt);
+		System.out.println(receipt);
 		
 		assertEquals("Number of lines not correct", 2, receipt.chars().filter(ch -> ch == '\n').count());
+	}
+	
+	@Test
+	public void testPrintEmptyShoppingCartReceipt() {
+		station.printer.addInk(ReceiptPrinter.MAXIMUM_INK);
+		station.printer.addPaper(ReceiptPrinter.MAXIMUM_PAPER);
+		
+		printer.printReceipt();
+		
+		String receipt = station.printer.removeReceipt();
+		
+		System.out.println(receipt);
+		assertEquals("Number of lines not correct", 1, receipt.chars().filter(ch -> ch == '\n').count());
+	}
+	
+	@Test
+	public void testFullShoppingCartReceipt() {
+		station.printer.addInk(ReceiptPrinter.MAXIMUM_INK);
+		station.printer.addPaper(ReceiptPrinter.MAXIMUM_PAPER);
+		
+		for(int i = 0; i < 4; i++) {
+			Barcode bc = createBarcodeFromString(Integer.toString(i));
+			ShoppingCart.getInstance().Add(ProductDatabase.Instance.LookupItemViaBarcode(bc), 0);
+		}
+		
+		printer.printReceipt();
+		
+		String receipt = station.printer.removeReceipt();
+		System.out.println(receipt);
+		assertEquals("Number of lines incorrect", 5, receipt.chars().filter(ch -> ch=='\n').count());
 	}
 	
 	private Barcode createBarcodeFromString(String barcode) {
