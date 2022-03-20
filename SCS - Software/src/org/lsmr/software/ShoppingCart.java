@@ -60,6 +60,14 @@ public class ShoppingCart {
 	
 	public static ShoppingCart Instance = new ShoppingCart();
 	
+	/**
+	 * Returns the singleton instance of shopping cart
+	 * @return The shopping cart singleton.
+	 */
+	public static ShoppingCart getInstance() {
+		return Instance;
+	}
+	
 	private ArrayList<ShoppingCartEntry> cart;
 	
 	private ShoppingCart() {
