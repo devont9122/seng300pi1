@@ -42,13 +42,12 @@ public class CustomerScansItem implements BarcodeScannerObserver {
 		try {
 			TimeUnit.SECONDS.sleep(5);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		/*
 		 *Since there isn't a way to get the expected weights of a product as of right now, I made the assumption that the weight increase in the bagging area 
-		 *scale corresponds to the expected product weight
+		 *scale corresponds to the expected product weight. This will wait until an item has been placed in the bagging area before adding a product and it's weight into the shopping cart.
 		 */
 		while(getItemWeightFromBaggingArea() == 0) {
 			barcodeScanner.disable();
