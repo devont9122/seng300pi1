@@ -20,16 +20,12 @@ public class payWithBankNote {
 		public boolean isFull = false;
 		
 		
-		public int accept(Banknote bNote)
+		public void accept(Banknote bNote)
 		{
-			if(valid = true && isFull == false)
+			if(valid == true && isFull == false)
 			{
-				return bNote.getValue();
+				//paymentTracker.addRemainingPayment(bNote.getValue());
 			}
-			else
-			{
-				return 0;
-			}	
 		}
 		
 		
