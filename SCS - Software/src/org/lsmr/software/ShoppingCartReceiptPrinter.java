@@ -1,8 +1,11 @@
 package org.lsmr.software;
 
 import java.math.BigDecimal;
+import java.util.Currency;
 import java.util.List;
+import java.util.Locale;
 
+import org.lsmr.selfcheckout.Coin;
 import org.lsmr.selfcheckout.devices.AbstractDevice;
 import org.lsmr.selfcheckout.devices.ReceiptPrinter;
 import org.lsmr.selfcheckout.devices.SelfCheckoutStation;
@@ -20,66 +23,78 @@ public class ShoppingCartReceiptPrinter implements ReceiptPrinterObserver {
 	
 
 	public ShoppingCartReceiptPrinter(SelfCheckoutStation station) {
-		noPaper = false;
-		noInk = false;
+		noPaper = noInk = true; // Assume this is created at the same time as the receipt printer
 		
 		this.station = station;
 		station.printer.attach(this);
 	}
 	
 	public void printReceipt() {
+		final String currencySymbol = Currency.getInstance(Locale.CANADA).getSymbol();
+		
 		List<ShoppingCart.ShoppingCartEntry> cart = ShoppingCart.getInstance().getEntries();
 		
 		// print a header?
 		
 		// Print each item line by line
 		for(ShoppingCart.ShoppingCartEntry entry : cart) {
-			if(canPrint()) {
-				Product prod = entry.getProduct();
-				BigDecimal price = entry.getPrice();
-				
-				// Refactor in HW: both barcoded and PLU product classes have a description field; move up into product class?
-				String prodDesc;
-				if(prod.getClass() == BarcodedProduct.class) {
-					prodDesc = ((BarcodedProduct)prod).getDescription();
-				}
-				else if(prod.getClass() == PLUCodedProduct.class) {
-					prodDesc = ((PLUCodedProduct)prod).getDescription();
-				}
-				else {
-					// explode
-					prodDesc = "";
-				}
-				
-				for(int i = 0; i < prodDesc.length(); i++) {
-					if(canPrint())
-						station.printer.print(prodDesc.charAt(i));
-					else {
-						//
-					}
-				}
-				
-				String priceStr = price.toString();
-				for(int i = 0; i < 3; i++)
-					station.printer.print(' ');
-				
-				station.printer.print('$');
-				for(int i = 0; i < priceStr.length(); i++) {
-					station.printer.print(priceStr.charAt(i));
-				}
-				
-				// New line
-				station.printer.print('\n');
+			Product prod = entry.getProduct();
+			BigDecimal price = entry.getPrice();
+			
+			// Refactor in HW: both barcoded and PLU product classes have a description field; move up into product class?
+			String prodDesc;
+			if(prod.getClass() == BarcodedProduct.class) {
+				prodDesc = ((BarcodedProduct)prod).getDescription();
+			}
+			else if(prod.getClass() == PLUCodedProduct.class) {
+				prodDesc = ((PLUCodedProduct)prod).getDescription();
 			}
 			else {
 				// explode
+				prodDesc = "";
 			}
+			
+			printString(prodDesc);
+			
+			// Right align price
+			String priceStr = currencySymbol + price.toString();
+			int empty = ReceiptPrinter.CHARACTERS_PER_LINE-prodDesc.length()-priceStr.length();
+			printEmpty(empty);
+			
+			printString(priceStr);
+			
+			// New line
+			station.printer.print('\n');
 		}
 		
 		// End message
+		printLine();
+		
+		String totalStr = currencySymbol + ShoppingCart.getInstance().getTotalPrice().toString();
+		printString("TOTAL");
+		printEmpty(ReceiptPrinter.CHARACTERS_PER_LINE-5-totalStr.length());
+		printString(totalStr);
 		
 		// Cut the receipt
 		station.printer.cutPaper();
+	}
+	
+	private void printString(String str) {
+		for(int i = 0; i < str.length(); i++) {
+			if(canPrint())
+				station.printer.print(str.charAt(i));
+			// Not sure how to handle the case where the receipt printer ran out of paper or ink mid-print
+			// Need to wait for paper/ink to be reloaded before continuing...
+		}
+	}
+	
+	private void printLine() {
+		printString("_".repeat(ReceiptPrinter.CHARACTERS_PER_LINE));
+		station.printer.print('\n');
+	}
+	
+	private void printEmpty(int count) {
+		printString(" ".repeat(count));
 	}
 	
 	@Override
