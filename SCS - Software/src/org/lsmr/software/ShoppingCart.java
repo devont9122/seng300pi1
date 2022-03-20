@@ -2,6 +2,7 @@ package org.lsmr.software;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.lsmr.selfcheckout.products.Product;
 
@@ -13,7 +14,7 @@ public class ShoppingCart {
 	/**
 	 * Represents a single entry into the virtual shopping cart.
 	 */
-	class ShoppingCartEntry {
+	public class ShoppingCartEntry {
 		private Product product;
 		private BigDecimal weightInGrams;
 		
@@ -103,5 +104,9 @@ public class ShoppingCart {
 	 */
 	public void Empty() {
 		cart.clear();
+	}
+	
+	public List<ShoppingCartEntry> getEntries() {
+		return cart;
 	}
 }
