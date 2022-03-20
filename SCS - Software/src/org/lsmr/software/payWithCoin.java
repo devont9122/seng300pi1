@@ -14,7 +14,7 @@ import org.lsmr.selfcheckout.devices.observers.CoinValidatorObserver;
 public class payWithCoin implements AbstractDeviceObserver, CoinStorageUnitObserver, CoinValidatorObserver {
 
 	private SelfCheckoutStation station;
-	private BigDecimal value;
+	public BigDecimal value;
 	
 	@Override
 	public void validCoinDetected(CoinValidator validator, BigDecimal value) {

@@ -25,10 +25,15 @@ public class paymentTracker {
 		return this.paidAmount;
 	}
 	
+	
+//	public void addRemainingPayment(BigDecimal value) {
+//		this.paidAmount = this.paidAmount.add(value);
+//	}
+	
+	
 	// Call this method to update paid amount in the observers
-	public void addRemainingPayment(BigDecimal value) {
-		
-		
-		this.paidAmount = this.paidAmount.add(value);
+	public void addPayment() {
+		this.paidAmount = this.paidAmount.add(payingWithBankNote.value);
+		this.paidAmount = this.paidAmount.add(payingWithCoin.value);
 	}
 }
