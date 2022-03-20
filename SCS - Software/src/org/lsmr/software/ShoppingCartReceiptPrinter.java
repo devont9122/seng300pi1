@@ -67,7 +67,6 @@ public class ShoppingCartReceiptPrinter implements ReceiptPrinterObserver {
 			station.printer.print('\n');
 		}
 		
-		
 		// End message
 		printLine();
 		
@@ -84,7 +83,8 @@ public class ShoppingCartReceiptPrinter implements ReceiptPrinterObserver {
 		for(int i = 0; i < str.length(); i++) {
 			if(canPrint())
 				station.printer.print(str.charAt(i));
-			
+			// Not sure how to handle the case where the receipt printer ran out of paper or ink mid-print
+			// Need to wait for paper/ink to be reloaded before continuing...
 		}
 	}
 	

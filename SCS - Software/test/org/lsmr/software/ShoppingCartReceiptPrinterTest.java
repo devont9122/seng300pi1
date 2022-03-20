@@ -62,7 +62,7 @@ public class ShoppingCartReceiptPrinterTest {
 		
 		System.out.println(receipt);
 		
-		assertEquals("Number of lines not correct", 2, receipt.chars().filter(ch -> ch == '\n').count());
+		assertEquals("Number of lines not correct", 3, countLines(receipt));
 	}
 	
 	@Test
@@ -75,7 +75,7 @@ public class ShoppingCartReceiptPrinterTest {
 		String receipt = station.printer.removeReceipt();
 		
 		System.out.println(receipt);
-		assertEquals("Number of lines not correct", 1, receipt.chars().filter(ch -> ch == '\n').count());
+		assertEquals("Number of lines not correct", 2, countLines(receipt));
 	}
 	
 	@Test
@@ -83,8 +83,8 @@ public class ShoppingCartReceiptPrinterTest {
 		station.printer.addInk(ReceiptPrinter.MAXIMUM_INK);
 		station.printer.addPaper(ReceiptPrinter.MAXIMUM_PAPER);
 		
-		for(int i = 0; i < 4; i++) {
-			Barcode bc = createBarcodeFromString(Integer.toString(i));
+		for(int i = 0; i < 8; i++) {
+			Barcode bc = createBarcodeFromString(Integer.toString(i%4));
 			ShoppingCart.getInstance().Add(ProductDatabase.Instance.LookupItemViaBarcode(bc), 0);
 		}
 		
@@ -92,7 +92,11 @@ public class ShoppingCartReceiptPrinterTest {
 		
 		String receipt = station.printer.removeReceipt();
 		System.out.println(receipt);
-		assertEquals("Number of lines incorrect", 5, receipt.chars().filter(ch -> ch=='\n').count());
+		assertEquals("Number of lines incorrect", 10, countLines(receipt));
+	}
+	
+	private long countLines(String str) {
+		return str.chars().filter(c -> c == '\n').count() + 1;
 	}
 	
 	private Barcode createBarcodeFromString(String barcode) {
