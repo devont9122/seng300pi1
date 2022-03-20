@@ -1,8 +1,11 @@
 package org.lsmr.software;
 
 import java.math.BigDecimal;
+import java.util.Currency;
 import java.util.List;
+import java.util.Locale;
 
+import org.lsmr.selfcheckout.Coin;
 import org.lsmr.selfcheckout.devices.AbstractDevice;
 import org.lsmr.selfcheckout.devices.ReceiptPrinter;
 import org.lsmr.selfcheckout.devices.SelfCheckoutStation;
@@ -27,6 +30,8 @@ public class ShoppingCartReceiptPrinter implements ReceiptPrinterObserver {
 	}
 	
 	public void printReceipt() {
+		final String currencySymbol = Currency.getInstance(Locale.CANADA).getSymbol();
+		
 		List<ShoppingCart.ShoppingCartEntry> cart = ShoppingCart.getInstance().getEntries();
 		
 		// print a header?
@@ -52,7 +57,7 @@ public class ShoppingCartReceiptPrinter implements ReceiptPrinterObserver {
 			printString(prodDesc);
 			
 			// Right align price
-			String priceStr = "$" + price.toString();
+			String priceStr = currencySymbol + price.toString();
 			int empty = ReceiptPrinter.CHARACTERS_PER_LINE-prodDesc.length()-priceStr.length();
 			printEmpty(empty);
 			
@@ -66,7 +71,7 @@ public class ShoppingCartReceiptPrinter implements ReceiptPrinterObserver {
 		// End message
 		printLine();
 		
-		String totalStr = "$" + ShoppingCart.getInstance().getTotalPrice().toString();
+		String totalStr = currencySymbol + ShoppingCart.getInstance().getTotalPrice().toString();
 		printString("TOTAL");
 		printEmpty(ReceiptPrinter.CHARACTERS_PER_LINE-5-totalStr.length());
 		printString(totalStr);
