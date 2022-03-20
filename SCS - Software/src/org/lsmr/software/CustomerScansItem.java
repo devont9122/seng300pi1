@@ -11,8 +11,8 @@ import org.lsmr.selfcheckout.products.BarcodedProduct;
 import org.lsmr.software.ShoppingCart.ShoppingCartEntry;
 
 public class CustomerScansItem implements BarcodeScannerObserver {
-	public SelfCheckoutStation station;
-	public ShoppingCart shopCart;
+	public SelfCheckoutStation station ;
+	public ShoppingCart shopCart = ShoppingCart.Instance;
 	public ProductDatabase database;
 
 	
@@ -27,8 +27,15 @@ public class CustomerScansItem implements BarcodeScannerObserver {
 	 *            The barcode that was read by the scanner.
 	 */
 	public void barcodeScanned(BarcodeScanner barcodeScanner, Barcode barcode) {
-		BarcodedProduct product = database.LookupItemViaBarcode(barcode);
-
+		
+		BarcodedProduct product;
+		if (database.LookupItemViaBarcode(barcode) != null) {
+			product = database.LookupItemViaBarcode(barcode);
+		}
+		else {
+			
+		}
+		
 		
 		float weight = 0;
 		try {
@@ -44,16 +51,10 @@ public class CustomerScansItem implements BarcodeScannerObserver {
 	};
 
 	@Override
-	public void enabled(AbstractDevice<? extends AbstractDeviceObserver> device) {
-		device.isDisabled();
-		
-	}
+	public void enabled(AbstractDevice<? extends AbstractDeviceObserver> device) {}
 
 	@Override
-	public void disabled(AbstractDevice<? extends AbstractDeviceObserver> device) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void disabled(AbstractDevice<? extends AbstractDeviceObserver> device) {}
 
 
 }
