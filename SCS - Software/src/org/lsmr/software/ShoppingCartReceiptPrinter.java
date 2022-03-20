@@ -51,12 +51,10 @@ public class ShoppingCartReceiptPrinter implements ReceiptPrinterObserver {
 			
 			printString(prodDesc);
 			
-			String priceStr = "$" + price.toString();
-			
 			// Right align price
+			String priceStr = "$" + price.toString();
 			int empty = ReceiptPrinter.CHARACTERS_PER_LINE-prodDesc.length()-priceStr.length();
-			for(int i = 0; i < empty; i++)
-				station.printer.print(' ');
+			printEmpty(empty);
 			
 			printString(priceStr);
 			
@@ -66,6 +64,12 @@ public class ShoppingCartReceiptPrinter implements ReceiptPrinterObserver {
 		
 		
 		// End message
+		printLine();
+		
+		String totalStr = "$" + ShoppingCart.getInstance().getTotalPrice().toString();
+		printString("TOTAL");
+		printEmpty(ReceiptPrinter.CHARACTERS_PER_LINE-5-totalStr.length());
+		printString(totalStr);
 		
 		// Cut the receipt
 		station.printer.cutPaper();
@@ -77,6 +81,15 @@ public class ShoppingCartReceiptPrinter implements ReceiptPrinterObserver {
 				station.printer.print(str.charAt(i));
 			
 		}
+	}
+	
+	private void printLine() {
+		printString("_".repeat(ReceiptPrinter.CHARACTERS_PER_LINE));
+		station.printer.print('\n');
+	}
+	
+	private void printEmpty(int count) {
+		printString(" ".repeat(count));
 	}
 	
 	@Override

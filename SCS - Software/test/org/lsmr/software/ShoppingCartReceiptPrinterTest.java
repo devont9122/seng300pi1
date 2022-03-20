@@ -14,7 +14,6 @@ import org.lsmr.selfcheckout.Barcode;
 import org.lsmr.selfcheckout.Numeral;
 import org.lsmr.selfcheckout.devices.ReceiptPrinter;
 import org.lsmr.selfcheckout.devices.SelfCheckoutStation;
-import org.lsmr.selfcheckout.devices.SimulationException;
 import org.lsmr.selfcheckout.products.BarcodedProduct;
 
 public class ShoppingCartReceiptPrinterTest {
@@ -63,7 +62,7 @@ public class ShoppingCartReceiptPrinterTest {
 		
 		System.out.print(receipt);
 		
-		assertEquals("Number of lines not correct", 1, receipt.chars().filter(ch -> ch == '\n').count());
+		assertEquals("Number of lines not correct", 2, receipt.chars().filter(ch -> ch == '\n').count());
 	}
 	
 	private Barcode createBarcodeFromString(String barcode) {
