@@ -28,27 +28,23 @@ public class payWithCoin implements AbstractDeviceObserver, CoinStorageUnitObser
 
 	@Override
 	public void coinsFull(CoinStorageUnit unit) {
-		// This is handled by the coinValidator class
+		// This is handled by the coinStorageUnit class
 	}
 
 	@Override
 	public void coinAdded(CoinStorageUnit unit) {
-		/*
-		 * 
-		 * AAAAAAAAAAAAAAAAAAAAAAAAAAAA
-		 * 
-		 */
+		//
 	}
 
 	@Override
 	public void coinsLoaded(CoinStorageUnit unit) {
-		// This is handled by the coinValidator class
+		// This is handled by the coinStorageUnit class
 		
 	}
 
 	@Override
 	public void coinsUnloaded(CoinStorageUnit unit) {
-		// This is handled by the coinValidator class
+		// This is handled by the coinStorageUnit class
 		
 	}
 
