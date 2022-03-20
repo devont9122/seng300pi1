@@ -8,16 +8,14 @@ import org.lsmr.selfcheckout.devices.SelfCheckoutStation;
 import org.lsmr.selfcheckout.devices.observers.AbstractDeviceObserver;
 import org.lsmr.selfcheckout.devices.observers.BarcodeScannerObserver;
 import org.lsmr.selfcheckout.products.BarcodedProduct;
-import org.lsmr.software.ShoppingCart.ShoppingCartEntry;
 
 public class CustomerScansItem implements BarcodeScannerObserver {
 	public SelfCheckoutStation station ;
 	public ShoppingCart shopCart = ShoppingCart.Instance;
 	public ProductDatabase database;
-
 	
 	
-
+	
 	/**
 	 * An event announcing that the indicated barcode has been successfully scanned.
 	 * 
@@ -28,15 +26,19 @@ public class CustomerScansItem implements BarcodeScannerObserver {
 	 */
 	public void barcodeScanned(BarcodeScanner barcodeScanner, Barcode barcode) {
 		
-		BarcodedProduct product;
+		BarcodedProduct product = null;
 		if (database.LookupItemViaBarcode(barcode) != null) {
 			product = database.LookupItemViaBarcode(barcode);
 		}
-		else {
-			
+		//barcode does not map to a product, discrepancy
+		else {	
+			barcodeScanner.disable();
 		}
 		
-		
+		/*
+		 *Since there isn't a way to get the expected weights of a product, I made the assumption that the weight increase in the bagging area 
+		 *scale corresponds to the expected product weight weight
+		 */
 		float weight = 0;
 		try {
 			weight = (float) station.scale.getCurrentWeight();
@@ -49,6 +51,14 @@ public class CustomerScansItem implements BarcodeScannerObserver {
 		
 	
 	};
+	/*
+	 * To override a block due to a scanning discrepancy
+	 */
+	public void overrideBlock(BarcodeScanner barcodeScanner) {
+		barcodeScanner.enable();
+	}
+	
+	
 
 	@Override
 	public void enabled(AbstractDevice<? extends AbstractDeviceObserver> device) {}
