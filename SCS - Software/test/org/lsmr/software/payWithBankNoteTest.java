@@ -9,58 +9,56 @@ import org.lsmr.selfcheckout.devices.observers.BanknoteValidatorObserver;
 
 import static org.junit.Assert.*;
 
+import java.math.BigDecimal;
 import java.util.Currency;
 
 import org.junit.*;
 
 public class payWithBankNoteTest{
     
+	public payWithBankNote test = new payWithBankNote();
+   
+ 	public Currency cTest = Currency.getInstance("CAD");
 	
     @Test
     public void checkAccept()
     {
-    	
-        payWithBankNote test = new payWithBankNote();
-        
-    	Currency cTest = Currency.getInstance("CAD");
-        Banknote testNote = new Banknote (cTest, 5);
-      
+
+        Banknote testNote = new Banknote (cTest, 5);    
         test.valid = true;
         test.isFull = false;
         
-        assertEquals(5 ,test.accept(testNote));
-        
+        test.accept(testNote);
+       
+        assertEquals(5 , test.total.getPaidAmount() == BigDecimal.valueOf(5));
     }
     
     @Test
     public void checkAcceptWhenFull()
     {
     	
-        payWithBankNote test = new payWithBankNote();
-        
-    	Currency cTest = Currency.getInstance("CAD");
         Banknote testNote = new Banknote (cTest, 5);
       
         test.valid = true;
         test.isFull = true;
         
-        assertEquals(0 ,test.accept(testNote));
+        test.accept(testNote);
+      
+        
+        assertEquals(0 , test.total.getPaidAmount() == BigDecimal.valueOf(0));
         
     }
     
     @Test
     public void checkAcceptWhenNotValid()
     {
-    	
-        payWithBankNote test = new payWithBankNote();
-        
-    	Currency cTest = Currency.getInstance("CAD");
-        Banknote testNote = new Banknote (cTest, 5);
-      
+    	Banknote testNote = new Banknote (cTest, 5);
         test.valid = false;
         test.isFull = true;
         
-        assertEquals(0 ,test.accept(testNote));
+        test.accept(testNote);
+      
+       // assertEquals(0 , tTrack.getPaidAmount());
         
     }
     

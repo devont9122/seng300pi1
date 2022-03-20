@@ -27,6 +27,8 @@ public class paymentTracker {
 	
 	// Call this method to update paid amount in the observers
 	public void addRemainingPayment(BigDecimal value) {
+		
+		
 		this.paidAmount = this.paidAmount.add(value);
 	}
 }
