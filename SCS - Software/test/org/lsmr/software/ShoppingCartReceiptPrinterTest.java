@@ -3,8 +3,6 @@ package org.lsmr.software;
 import static org.junit.Assert.*;
 
 import java.math.BigDecimal;
-import java.util.Currency;
-import java.util.Locale;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -41,7 +39,7 @@ public class ShoppingCartReceiptPrinterTest {
 
 	@Before
 	public void setUp() throws Exception {
-		station = new SelfCheckoutStation(Currency.getInstance(Locale.CANADA), new int[] {5,10,20,50,100}, new BigDecimal[] {new BigDecimal("0.05"), new BigDecimal("0.10"), new BigDecimal("0.25"), new BigDecimal("1.00"), new BigDecimal("2.00")}, 1000, 1);
+		station = SelfCheckoutStationSetup.createSelfCheckoutStationFromInit();
 		printer = new ShoppingCartReceiptPrinter(station);
 		
 		ShoppingCart.getInstance().Empty();
