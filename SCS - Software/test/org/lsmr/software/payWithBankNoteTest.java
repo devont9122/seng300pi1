@@ -15,7 +15,7 @@ import java.util.Currency;
 import org.junit.*;
 
 public class payWithBankNoteTest{
-    
+	
 	public payWithBankNote test = new payWithBankNote();
    
  	public Currency cTest = Currency.getInstance("CAD");
@@ -30,7 +30,7 @@ public class payWithBankNoteTest{
         
         test.accept(testNote);
        
-        assertEquals(5 , test.total.getPaidAmount() == BigDecimal.valueOf(5));
+        assertEquals(BigDecimal.valueOf(5), test.value);
     }
     
     @Test
@@ -45,7 +45,7 @@ public class payWithBankNoteTest{
         test.accept(testNote);
       
         
-        assertEquals(0 , test.total.getPaidAmount() == BigDecimal.valueOf(0));
+        assertEquals(BigDecimal.valueOf(0), test.value);
         
     }
     
