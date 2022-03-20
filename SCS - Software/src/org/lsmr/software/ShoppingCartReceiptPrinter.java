@@ -33,52 +33,50 @@ public class ShoppingCartReceiptPrinter implements ReceiptPrinterObserver {
 		
 		// Print each item line by line
 		for(ShoppingCart.ShoppingCartEntry entry : cart) {
-			if(canPrint()) {
-				Product prod = entry.getProduct();
-				BigDecimal price = entry.getPrice();
-				
-				// Refactor in HW: both barcoded and PLU product classes have a description field; move up into product class?
-				String prodDesc;
-				if(prod.getClass() == BarcodedProduct.class) {
-					prodDesc = ((BarcodedProduct)prod).getDescription();
-				}
-				else if(prod.getClass() == PLUCodedProduct.class) {
-					prodDesc = ((PLUCodedProduct)prod).getDescription();
-				}
-				else {
-					// explode
-					prodDesc = "";
-				}
-				
-				for(int i = 0; i < prodDesc.length(); i++) {
-					if(canPrint())
-						station.printer.print(prodDesc.charAt(i));
-					else {
-						//
-					}
-				}
-				
-				String priceStr = price.toString();
-				for(int i = 0; i < 3; i++)
-					station.printer.print(' ');
-				
-				station.printer.print('$');
-				for(int i = 0; i < priceStr.length(); i++) {
-					station.printer.print(priceStr.charAt(i));
-				}
-				
-				// New line
-				station.printer.print('\n');
+			Product prod = entry.getProduct();
+			BigDecimal price = entry.getPrice();
+			
+			// Refactor in HW: both barcoded and PLU product classes have a description field; move up into product class?
+			String prodDesc;
+			if(prod.getClass() == BarcodedProduct.class) {
+				prodDesc = ((BarcodedProduct)prod).getDescription();
+			}
+			else if(prod.getClass() == PLUCodedProduct.class) {
+				prodDesc = ((PLUCodedProduct)prod).getDescription();
 			}
 			else {
 				// explode
+				prodDesc = "";
 			}
+			
+			printString(prodDesc);
+			
+			String priceStr = "$" + price.toString();
+			
+			// Right align price
+			int empty = ReceiptPrinter.CHARACTERS_PER_LINE-prodDesc.length()-priceStr.length();
+			for(int i = 0; i < empty; i++)
+				station.printer.print(' ');
+			
+			printString(priceStr);
+			
+			// New line
+			station.printer.print('\n');
 		}
+		
 		
 		// End message
 		
 		// Cut the receipt
 		station.printer.cutPaper();
+	}
+	
+	private void printString(String str) {
+		for(int i = 0; i < str.length(); i++) {
+			if(canPrint())
+				station.printer.print(str.charAt(i));
+			
+		}
 	}
 	
 	@Override
