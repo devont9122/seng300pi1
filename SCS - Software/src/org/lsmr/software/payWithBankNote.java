@@ -1,5 +1,6 @@
 package org.lsmr.software;
 
+import java.math.BigDecimal;
 import java.util.Currency;
 
 import org.lsmr.selfcheckout.Banknote;
@@ -13,23 +14,21 @@ import org.lsmr.selfcheckout.devices.observers.AbstractDeviceObserver;
 import org.lsmr.selfcheckout.devices.observers.BanknoteStorageUnitObserver;
 import org.lsmr.selfcheckout.devices.observers.BanknoteValidatorObserver;
 
-public class payWithBankNote {
+public class payWithBankNote{
 
 		public SelfCheckoutStation station;
 		public boolean valid = false;
 		public boolean isFull = false;
 		
+		//payment tracker would look at this value
+		public BigDecimal value = BigDecimal.valueOf(0);
 		
-		public int accept(Banknote bNote)
+		public void accept(Banknote bNote)
 		{
-			if(valid = true && isFull == false)
+			if(valid == true && isFull == false)
 			{
-				return bNote.getValue();
+				value = BigDecimal.valueOf(bNote.getValue());
 			}
-			else
-			{
-				return 0;
-			}	
 		}
 		
 		
@@ -104,7 +103,5 @@ public class payWithBankNote {
 			
 		};
 		
-		
-		
-		
+
 }
