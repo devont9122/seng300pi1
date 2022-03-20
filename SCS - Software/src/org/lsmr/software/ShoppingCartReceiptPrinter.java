@@ -20,8 +20,7 @@ public class ShoppingCartReceiptPrinter implements ReceiptPrinterObserver {
 	
 
 	public ShoppingCartReceiptPrinter(SelfCheckoutStation station) {
-		noPaper = false;
-		noInk = false;
+		noPaper = noInk = true; // Assume this is created at the same time as the receipt printer
 		
 		this.station = station;
 		station.printer.attach(this);
