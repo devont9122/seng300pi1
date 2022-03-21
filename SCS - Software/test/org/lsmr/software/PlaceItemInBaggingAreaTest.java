@@ -7,21 +7,16 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Currency;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import org.lsmr.selfcheckout.Barcode;
 import org.lsmr.selfcheckout.BarcodedItem;
 import org.lsmr.selfcheckout.Item;
 import org.lsmr.selfcheckout.Numeral;
+
 import org.lsmr.selfcheckout.devices.SelfCheckoutStation;
-import org.lsmr.selfcheckout.devices.observers.ElectronicScaleObserver;
 
 public class PlaceItemInBaggingAreaTest {
-	
-	@Before
-	public void setUp() throws Exception {
-	}
 	
 	@Test
 	public void testAddItem() {
@@ -32,7 +27,7 @@ public class PlaceItemInBaggingAreaTest {
 		SelfCheckoutStation testStation = new SelfCheckoutStation(testCurrency, testBanknoteDenominations, testCoinDenominations, 50, 2);	// Wasn't sure what the max weight should be (not addressed in Assignment 1 or Project Iteration 1), had to look up: 23kg or 50lbs
 		PlaceItemInBaggingArea testBaggingArea = new PlaceItemInBaggingArea(testStation);
 		
-		//Creation of Item
+		//Creation of an Item
 		Barcode testBarcode = new Barcode(new Numeral[] {Numeral.five, Numeral.eight, Numeral.three, Numeral.four});
 		Item testItem = new BarcodedItem(testBarcode, 10);
 		
@@ -57,7 +52,7 @@ public class PlaceItemInBaggingAreaTest {
 		SelfCheckoutStation testStation = new SelfCheckoutStation(testCurrency, testBanknoteDenominations, testCoinDenominations, 50, 2);	// Wasn't sure what the max weight should be (not addressed in Assignment 1 or Project Iteration 1), had to look up: 23kg or 50lbs
 		PlaceItemInBaggingArea testBaggingArea = new PlaceItemInBaggingArea(testStation);
 				
-		//Creation of Items
+		//Creation of Multiple Items
 		Barcode testBarcode1 = new Barcode(new Numeral[] {Numeral.three, Numeral.two, Numeral.seven, Numeral.one});
 		Item testItem1 = new BarcodedItem(testBarcode1, 10);
 		Barcode testBarcode2 = new Barcode(new Numeral[] {Numeral.six, Numeral.five, Numeral.five, Numeral.eight});
@@ -87,7 +82,7 @@ public class PlaceItemInBaggingAreaTest {
 		SelfCheckoutStation testStation = new SelfCheckoutStation(testCurrency, testBanknoteDenominations, testCoinDenominations, 50, 2);
 		PlaceItemInBaggingArea testBaggingArea = new PlaceItemInBaggingArea(testStation);
 				
-		//Creation of Item
+		//Creation of Overweight Item
 		Barcode testBarcode = new Barcode(new Numeral[] {Numeral.one, Numeral.two, Numeral.three, Numeral.four});
 		Item testItem = new BarcodedItem(testBarcode, 550);
 				
@@ -103,7 +98,7 @@ public class PlaceItemInBaggingAreaTest {
 		assertEquals(actualList, expectedList);
 	}
 	
-	//Item is under-weight
+	//Item is Underweight
 	@Test
 	public void testAddUnderweighItem() {
 		//Creation of the Self-Checkout Machine & Bagging Area
@@ -113,7 +108,7 @@ public class PlaceItemInBaggingAreaTest {
 		SelfCheckoutStation testStation = new SelfCheckoutStation(testCurrency, testBanknoteDenominations, testCoinDenominations, 50, 2);	// Wasn't sure what the max weight should be (not addressed in Assignment 1 or Project Iteration 1), had to look up: 23kg or 50lbs
 		PlaceItemInBaggingArea testBaggingArea = new PlaceItemInBaggingArea(testStation);
 				
-		//Creation of Item
+		//Creation of Underweight Item
 		Barcode testBarcode = new Barcode(new Numeral[] {Numeral.five, Numeral.eight, Numeral.three, Numeral.four});
 		Item testItem = new BarcodedItem(testBarcode, 1);
 				

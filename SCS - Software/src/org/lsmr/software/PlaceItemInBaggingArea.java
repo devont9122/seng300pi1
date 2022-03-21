@@ -25,16 +25,28 @@ public class PlaceItemInBaggingArea {
 		station = sct;
 		sct.scale.attach(eso);
 	}
-
+	
+	/**
+	 * An event announcing that n item has been added to the bagging area.
+	 * 
+	 * @param anItem
+	 * 			An item that has yet to be added to the bagging area.
+	 */
 	public void addItem(Item anItem) {
 		station.scale.add(anItem);
 		if (isAdded || isOverloaded) {
 			items.add(anItem);
-			isOverloaded = false;
 			isAdded = false;
+			isOverloaded= false;
 		}
 	}
 	
+	/**
+	 * An event announcing that an item has been removed from the bagging area
+	 * 
+	 * @param anItem
+	 * 			An item already located in the bagging area.
+	 */
 	public void removeItem(Item anItem) {
 		station.scale.remove(anItem);
 		if (isRemoved || isAdded) {

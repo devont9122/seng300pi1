@@ -4,123 +4,83 @@ import static org.junit.Assert.*;
 
 import java.math.BigDecimal;
 import java.util.Currency;
-import java.util.Locale;
-
-import org.junit.Before;
 import org.junit.Test;
 import org.lsmr.selfcheckout.Coin;
-import org.lsmr.selfcheckout.devices.OverloadException;
-import org.lsmr.selfcheckout.devices.SelfCheckoutStation;
-import org.lsmr.selfcheckout.devices.SimulationException;
 
 public class payWithCoinTest {
 	
-    paymentTracker tracker = new paymentTracker();
-    
-    Currency currency = Currency.getInstance(Locale.CANADA);
-    BigDecimal[] coinDenominations= {new BigDecimal(0.01), new BigDecimal(0.05), new BigDecimal(0.1),new BigDecimal(0.25), new BigDecimal(0.50)};
-    int[] bankNoteDenominations= {5,10,20,50,100};
-    SelfCheckoutStation station = new SelfCheckoutStation(currency, bankNoteDenominations, coinDenominations, 1, 1);
-    PayWithCoin payingWithCoin = new PayWithCoin(station);
-    
-    @Before
-    public void initialization() {
-        station.coinSlot.attach(payingWithCoin);
-        station.coinValidator.attach(payingWithCoin);
-        station.coinStorage.attach(payingWithCoin);
-        station.coinTray.attach(payingWithCoin);
+	//Instance Creation
+	public PayWithCoin testCoinPayment = new PayWithCoin();
+ 	public Currency currencyTest = Currency.getInstance("CAD");
+ 	
+ 	@Test
+    public void testAccept() {
+ 		BigDecimal value = new BigDecimal(5);
+        Coin testCoin = new Coin (currencyTest, value);    
+        testCoinPayment.coinValidity = true;
+        testCoinPayment.fullStorage = false;
+        
+        testCoinPayment.accept(testCoin);
+       
+        assertEquals(new BigDecimal(5), testCoinPayment.value);
     }
-    
-    // When coin is invalid
+ 	
+ 	@Test
+    public void testAcceptWhenInvalid() {
+    	BigDecimal value = new BigDecimal(5);
+        Coin testCoin = new Coin (currencyTest, value);
+    	testCoinPayment.coinValidity = false;
+    	testCoinPayment.fullStorage = true;
+        
+    	testCoinPayment.accept(testCoin);
+        
+    }
+ 	
     @Test
-    public void testInvalidCoinDetected(){
-        BigDecimal invalidCoin = new BigDecimal(0.25);
-        Coin coin = new Coin(currency, invalidCoin);
+    public void testAcceptWhenFullStorage() {
+    	BigDecimal value = new BigDecimal(5);
+        Coin testCoin = new Coin (currencyTest, value);
+      
+        testCoinPayment.coinValidity = true;
+        testCoinPayment.fullStorage = true;
         
-        BigDecimal insertedCoins = tracker.insertCoin(coin);
-        BigDecimal expectedInserted = new BigDecimal(0);
+        testCoinPayment.accept(testCoin);
+       
+        assertEquals(new BigDecimal(0), testCoinPayment.value);
         
-        assertEquals(expectedInserted, insertedCoins);
     }
     
-    // When coin is valid
+    //Tests when Coin is Valid
     @Test
-    public void testValidCoinDetected() {
-    	BigDecimal validCoin = new BigDecimal(0.25);
-        Coin coin = new Coin(currency, validCoin);
+    public void testValidCoin() {
+    	BigDecimal value = new BigDecimal(5);
         
-        
-        BigDecimal insertedCoins = tracker.insertCoin(coin);
-        BigDecimal expectedInserted = new BigDecimal(0.25);
-        
-        assertEquals(expectedInserted, insertedCoins);
+        testCoinPayment.observeCoin.validCoinDetected(null, value);
+        assertTrue(testCoinPayment.coinValidity == true);
     }
-
+    
+    //Tests when Coin is inValid
     @Test
-    public void testCoinAdded() {
-        fail("Not yet implemented");
+    public void testInvalidCoin() {
+        testCoinPayment.observeCoin.invalidCoinDetected(null);
+        assertTrue(testCoinPayment.coinValidity == false);
     }
-
+    
+    //Tests when CoinStorageUnit is Full
     @Test
-    public void testCoinsLoaded() throws SimulationException, OverloadException {
-    	BigDecimal validCoin = new BigDecimal(0.25);
-        Coin coin = new Coin(currency, validCoin);
+    public void testCoinsFull() {
+        testCoinPayment.observeStorage.coinsFull(null);
         
-        BigDecimal anotherValidCoin = new BigDecimal(0.25);
-        Coin loadingCoin = new Coin(currency, anotherValidCoin);
-        
-        station.coinStorage.load(loadingCoin, loadingCoin);
-        BigDecimal insertedCoins = tracker.insertCoin(coin);
-        BigDecimal expectedInserted = new BigDecimal(0.25);
-        
-        assertEquals(expectedInserted, insertedCoins);
+        assertTrue(testCoinPayment.fullStorage == true);
     }
-
+    
+    //Tests when CoinStorageUnit is not full
     @Test
     public void testCoinsUnloaded() {
-        station.coinStorage.unload();
-        int expectedStorage = 1000;
-        int actualStorage = station.coinStorage.getCapacity();
-        assertEquals(expectedStorage, actualStorage);
-    }
-
-    @Test
-    public void testPaymentWhenEnabled() {
-    	BigDecimal validCoin = new BigDecimal(0.25);
-        Coin coin = new Coin(currency, validCoin);
+        testCoinPayment.observeStorage.coinsUnloaded(null);
         
-        station.coinSlot.enable();
-        BigDecimal insertedCoins = tracker.insertCoin(coin);
-        BigDecimal expectedInserted = new BigDecimal(0.25);
-        
-        assertEquals(expectedInserted, insertedCoins);
-    }
-
-    @Test
-    public void testPaymenyWhenDisabled() {
-    	BigDecimal invalidCoin = new BigDecimal(0.25);
-        Coin coin = new Coin(currency, invalidCoin);
-        
-        station.coinSlot.disable();
-        BigDecimal insertedCoins = tracker.insertCoin(coin);
-        BigDecimal expectedInserted = new BigDecimal(0);
-        
-        assertEquals(expectedInserted, insertedCoins);
+        assertTrue(testCoinPayment.fullStorage == false);
     }
     
-    /*
-    @Test
-    public void testCoinsFull() throws SimulationException, OverloadException {
-        BigDecimal validCoin = new BigDecimal(0.25);
-        Coin coin = new Coin(currency, validCoin);
-        
-        while (station.coinStorage.getCoinCount() <= 999) {
-        	tracker.insertCoin(coin);
-        }
-        
-        BigDecimal insertedCoins = tracker.insertCoin(coin);
-        BigDecimal expectedInserted = new BigDecimal(0);
-        assertEquals(expectedInserted, insertedCoins);
-    }
-    */
+    
 }
