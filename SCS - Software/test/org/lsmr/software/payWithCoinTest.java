@@ -4,16 +4,42 @@ import static org.junit.Assert.*;
 
 import java.math.BigDecimal;
 import java.util.Currency;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.lsmr.selfcheckout.Coin;
+import org.lsmr.selfcheckout.devices.DisabledException;
+import org.lsmr.selfcheckout.devices.SelfCheckoutStation;
 
 public class payWithCoinTest {
 	
 	//Instance Creation
-	public PayWithCoin testCoinPayment = new PayWithCoin();
- 	public Currency currencyTest = Currency.getInstance("CAD");
+	SelfCheckoutStation station;
+	public PayWithCoin testCoinPayment;
+ 	public Currency currencyTest = SelfCheckoutStationSetup.currency;
+ 	
+ 	@Before
+ 	public void setUp() {
+ 		station = SelfCheckoutStationSetup.createSelfCheckoutStationFromInit();
+ 		testCoinPayment = new PayWithCoin(station);
+ 	}
  	
  	@Test
+ 	public void testCoinPaid() {
+ 		BigDecimal value = new BigDecimal("0.05");
+ 		Coin testCoin = new Coin(currencyTest, value);
+ 		
+ 		try {
+ 			station.coinSlot.accept(testCoin);
+ 			
+ 			assertEquals("Coin was not paid.", new BigDecimal("0.05"), testCoinPayment.totalPaid);
+ 		}
+ 		catch(DisabledException e) {
+ 			e.printStackTrace();
+ 		}
+ 	}
+ 	
+ 	/*@Test
     public void testAccept() {
  		BigDecimal value = new BigDecimal(5);
         Coin testCoin = new Coin (currencyTest, value);    
@@ -22,7 +48,7 @@ public class payWithCoinTest {
         
         testCoinPayment.accept(testCoin);
        
-        assertEquals(new BigDecimal(5), testCoinPayment.value);
+        assertEquals(new BigDecimal(5), testCoinPayment.totalPaid);
     }
  	
  	@Test
@@ -46,7 +72,7 @@ public class payWithCoinTest {
         
         testCoinPayment.accept(testCoin);
        
-        assertEquals(new BigDecimal(0), testCoinPayment.value);
+        assertEquals(new BigDecimal(0), testCoinPayment.totalPaid);
         
     }
     
@@ -80,7 +106,7 @@ public class payWithCoinTest {
         testCoinPayment.observeStorage.coinsUnloaded(null);
         
         assertTrue(testCoinPayment.fullStorage == false);
-    }
+    }*/
     
     
 }
