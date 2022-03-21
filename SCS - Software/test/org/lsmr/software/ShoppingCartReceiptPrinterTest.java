@@ -93,6 +93,22 @@ public class ShoppingCartReceiptPrinterTest {
 		assertEquals("Number of lines incorrect", 10, countLines(receipt));
 	}
 	
+	@Test(expected = IllegalStateException.class)
+	public void testOutOfPaper() {
+		station.printer.addInk(ReceiptPrinter.MAXIMUM_INK);
+		station.printer.addPaper(1);
+		
+		printer.printReceipt();
+	}
+	
+	@Test(expected = IllegalStateException.class)
+	public void testOutOfInk() {
+		station.printer.addInk(5);
+		station.printer.addPaper(ReceiptPrinter.MAXIMUM_PAPER);
+		
+		printer.printReceipt();
+	}
+	
 	private long countLines(String str) {
 		return str.chars().filter(c -> c == '\n').count() + 1;
 	}

@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -46,8 +47,11 @@ public class CustomerScansItemTest {
 		Barcode b = new Barcode(n);
 		BarcodedItem item = new BarcodedItem(b, 2.0);
 		scanner.scan(item);
-		assertTrue(scanner.isDisabled());
+		if(scan.getScanStatus(b).equals(1)) {
+			assertTrue(scanner.isDisabled());
+		}
 		
+		scan.emptyStatus();
 	}
 	
 	@Test
@@ -71,19 +75,44 @@ public class CustomerScansItemTest {
 		 List<ShoppingCartEntry> cartEntries = cart.getEntries();
 		 Product cartProduct = cartEntries.get(0).getProduct();
 		 assertSame(product, cartProduct);
+		 
+		 cart.Empty();
 	
 		
 	}
 	
 	@Test
 	public void addProductToCartAfterBlockTest() {
+		Numeral[] n1 = {Numeral.one, Numeral.two, Numeral.three};
+		Barcode b1 = new Barcode(n1);
+		BarcodedItem item1 = new BarcodedItem(b1, 2.0);
+		scanner.scan(item1);
 		
+		Numeral[] n2 = {Numeral.three, Numeral.two, Numeral.one};
+		Barcode b2 = new Barcode(n2);
+		BarcodedItem item2 = new BarcodedItem(b2, 2.0);
+		scanner.scan(item2);
+		
+		assertEquals(scan.getScanStatus(b2), null);
+		
+		cart.Empty();
+		scan.emptyStatus();
 	}
 	
 	@Test
-	public void scanWhenBlockedTest() {     //this tests scanner rather than CustomerScansItem lol
+	public void scanDuplicateItems() {     //this tests scanner rather than CustomerScansItem lol
+		Numeral[] n1 = {Numeral.one, Numeral.two, Numeral.three};
+		Barcode b1 = new Barcode(n1);
+		BarcodedItem item1 = new BarcodedItem(b1, 2.0);
+		scanner.scan(item1);
+		scale.add(item1);
 		
+		scanner.scan(item1);
+		scale.add(item1);
 		
+		assertEquals(cart.getEntries().get(0).getProduct(), cart.getEntries().get(1).getProduct());
+		cart.Empty();
+		scan.emptyStatus();
 	}
 	
 	@Test
@@ -91,10 +120,41 @@ public class CustomerScansItemTest {
 		scanner.disable();
 		scan.overrideBlock(scanner);
 		
+		Numeral[] n = {Numeral.one, Numeral.two, Numeral.three};
+		Barcode b = new Barcode(n);
+		BarcodedItem item = new BarcodedItem(b, 2.0);
+		
+		BarcodedProduct product = new BarcodedProduct(b, "a product", BigDecimal.valueOf(1.99));
+		database.RegisterProducts(product);
+		
+		scanner.scan(item);
+		scale.add(item);
+		
+		 List<ShoppingCartEntry> cartEntries = cart.getEntries();
+		 Product cartProduct = cartEntries.get(0).getProduct();
+		 assertSame(product, cartProduct);
+		
+		 cart.Empty();
 	}
 	
 	@Test
 	public void itemNotAddedToBaggingAreaTest() {
+		Numeral[] n = {Numeral.one, Numeral.two, Numeral.three};
+		Barcode b = new Barcode(n);
+		BarcodedItem item = new BarcodedItem(b, 2.0);
+		
+		BarcodedProduct product = new BarcodedProduct(b, "a product", BigDecimal.valueOf(1.99));
+		database.RegisterProducts(product);
+		
+		scanner.scan(item);
+		try {
+			TimeUnit.SECONDS.sleep(6);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		assertTrue(scanner.isDisabled());
+		
 		
 	}
 	
@@ -116,6 +176,24 @@ public class CustomerScansItemTest {
 	
 	@Test
 	public void multipleItemWeightCalculatedTest() {
+		Numeral[] n = {Numeral.one, Numeral.two, Numeral.three};
+		Barcode b = new Barcode(n);
+		BarcodedItem item = new BarcodedItem(b, 2.0);
+		
+		BarcodedProduct product = new BarcodedProduct(b, "a product", BigDecimal.valueOf(1.99));
+		database.RegisterProducts(product);
+		
+		scale.add(item);
+		scanner.scan(item);
+		
+		Numeral[] n1 = {Numeral.two, Numeral.two, Numeral.three};
+		Barcode b1 = new Barcode(n1);
+		BarcodedItem item1 = new BarcodedItem(b1, 3.0);
+		
+		scale.add(item1);
+		assertEquals(scan.getItemWeightFromBaggingArea(), 5.0f, 0.001);
+		
+		
 		
 	}
 

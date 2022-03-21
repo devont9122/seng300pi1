@@ -1,11 +1,8 @@
 package org.lsmr.software;
 
 import java.math.BigDecimal;
-import java.util.Currency;
 import java.util.List;
-import java.util.Locale;
 
-import org.lsmr.selfcheckout.Coin;
 import org.lsmr.selfcheckout.devices.AbstractDevice;
 import org.lsmr.selfcheckout.devices.ReceiptPrinter;
 import org.lsmr.selfcheckout.devices.SelfCheckoutStation;
@@ -20,7 +17,6 @@ public class ShoppingCartReceiptPrinter implements ReceiptPrinterObserver {
 	
 	private boolean noPaper;
 	private boolean noInk;
-	
 
 	public ShoppingCartReceiptPrinter(SelfCheckoutStation station) {
 		noPaper = noInk = true; // Assume this is created at the same time as the receipt printer
@@ -30,7 +26,7 @@ public class ShoppingCartReceiptPrinter implements ReceiptPrinterObserver {
 	}
 	
 	public void printReceipt() {
-		final String currencySymbol = Currency.getInstance(Locale.CANADA).getSymbol();
+		final String currencySymbol = SelfCheckoutStationSetup.currency.getSymbol();
 		
 		List<ShoppingCart.ShoppingCartEntry> cart = ShoppingCart.getInstance().getEntries();
 		
@@ -42,16 +38,12 @@ public class ShoppingCartReceiptPrinter implements ReceiptPrinterObserver {
 			BigDecimal price = entry.getPrice();
 			
 			// Refactor in HW: both barcoded and PLU product classes have a description field; move up into product class?
-			String prodDesc;
+			String prodDesc = "";
 			if(prod.getClass() == BarcodedProduct.class) {
 				prodDesc = ((BarcodedProduct)prod).getDescription();
 			}
 			else if(prod.getClass() == PLUCodedProduct.class) {
 				prodDesc = ((PLUCodedProduct)prod).getDescription();
-			}
-			else {
-				// explode
-				prodDesc = "";
 			}
 			
 			printString(prodDesc);
@@ -85,6 +77,8 @@ public class ShoppingCartReceiptPrinter implements ReceiptPrinterObserver {
 				station.printer.print(str.charAt(i));
 			// Not sure how to handle the case where the receipt printer ran out of paper or ink mid-print
 			// Need to wait for paper/ink to be reloaded before continuing...
+			else
+				throw new IllegalStateException("Receipt printer is out of paper or ink"); // For now, just throw an exception
 		}
 	}
 	
@@ -130,7 +124,7 @@ public class ShoppingCartReceiptPrinter implements ReceiptPrinterObserver {
 	}
 	
 	private boolean canPrint() {
-		return !(noPaper && noInk);
+		return !(noPaper || noInk);
 	}
 
 }
