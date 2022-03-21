@@ -19,6 +19,8 @@ public class Checkout {
 	PayWithCoin coinPayment = new PayWithCoin();
 	payWithBankNote banknotePayment = new payWithBankNote();
 	ShoppingCartReceiptPrinter printReceipt = new ShoppingCartReceiptPrinter(CheckoutStation);
+	
+	BigDecimal payment;
 
 	//BigDecimal paymentTotal = paymentTracker.getPaidAmount();
 	
@@ -33,12 +35,12 @@ public class Checkout {
 	
 	public void branchToPayWithcoin()
 	{
-		
+		payment.add(coinPayment.value);
 	}
 	
 	public void branchToPayWithBankNote()
 	{
-	
+		payment.add(banknotePayment.value);
 	}
 	//Calls printReceipt method in ShoppingCartReceiptPrinter class 
 	//This will print the receipt of the transaction
