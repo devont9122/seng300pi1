@@ -31,7 +31,6 @@ public class payWithBankNote{
 			}
 		}
 		
-		
 		public BanknoteValidatorObserver listener = new BanknoteValidatorObserver() {
 
 			@Override

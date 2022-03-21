@@ -1,5 +1,6 @@
 package org.lsmr.software;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -13,14 +14,18 @@ import org.lsmr.selfcheckout.devices.observers.BarcodeScannerObserver;
 import org.lsmr.selfcheckout.products.BarcodedProduct;
 
 public class CustomerScansItem implements BarcodeScannerObserver {
-	public SelfCheckoutStation station ;   //????
-	public ShoppingCart shopCart = ShoppingCart.Instance;
-	public ProductDatabase database = ProductDatabase.Instance;
+	public SelfCheckoutStation station ;  
+	public ShoppingCart shopCart;
+	public ProductDatabase database;
 	
-	private Map<Barcode, Integer> scanStatus;
+	private Map<Barcode, Integer> scanStatus = new HashMap<>();
 	
 	
-	public CustomerScansItem() {}
+	public CustomerScansItem(SelfCheckoutStation s, ShoppingCart c, ProductDatabase d) {
+		station = s;
+		shopCart = c;
+		database = d;
+	}
 	
 	/**
 	 * An event announcing that the indicated barcode has been successfully scanned.
@@ -32,11 +37,12 @@ public class CustomerScansItem implements BarcodeScannerObserver {
 	 */
 	public void barcodeScanned(BarcodeScanner barcodeScanner, Barcode barcode) {
 		
+		
 		if (scanStatus.get(barcode) == null) {
 			scanStatus.put(barcode, 1);
 		}
 		else {
-			Integer quantity = scanStatus.get(barcode);
+			int quantity = scanStatus.get(barcode);
 			scanStatus.replace(barcode, quantity + 1 );
 		}
 		
@@ -50,28 +56,12 @@ public class CustomerScansItem implements BarcodeScannerObserver {
 			product = database.LookupItemViaBarcode(barcode);
 		}
 		//barcode does not map to a product, discrepancy
-		else {	
+		if(database.LookupItemViaBarcode(barcode) == null) {	
 			barcodeScanner.disable();
 			return;
 		}
-		
-		//waits 5 seconds for customer to place item into bagging area before getting weight for product
-		try {
-			TimeUnit.SECONDS.sleep(5);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
-		/*
-		 *Since there isn't a way to get the expected weights of a product as of right now, I made the assumption that the weight increase in the bagging area 
-		 *scale corresponds to the expected product weight. This will wait until an item has been placed in the bagging area before adding a product and it's weight into the shopping cart.
-		 */
-		while(getItemWeightFromBaggingArea() == 0) {
-			barcodeScanner.disable();
-		}
-		barcodeScanner.enable();
-		float productWeight = getItemWeightFromBaggingArea();
-		shopCart.Add(product, productWeight);
+
+		shopCart.Add(product, 1);
 		
 	}
 	
@@ -92,31 +82,7 @@ public class CustomerScansItem implements BarcodeScannerObserver {
 		barcodeScanner.enable();
 	}
 	
-	/*
-	 *Since there isn't a way to get the expected weights of a product as of right now, I made the assumption that the weight increase in the bagging area 
-	 *scale corresponds to the expected product weight
-	 */
-	public float lastBaggingAreaWeight = 0;
-	/*
-	 * this will be used to get a weight for a product to be put into the shopping cart
-	 */
-	public float getItemWeightFromBaggingArea() {
-		float weight = 0;
-		float itemWeight;
-		try {
-			weight = (float) station.scale.getCurrentWeight();
-		
-		} catch (OverloadException e) {
-			e.printStackTrace();
-		}
-		
-		itemWeight = weight - lastBaggingAreaWeight;
-		lastBaggingAreaWeight = weight; 					//updates bagging area total weight to use to get weight of next item
-		
-		return itemWeight;
-		
-	}
-	
+
 	
 
 	@Override
