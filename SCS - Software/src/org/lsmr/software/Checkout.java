@@ -47,20 +47,3 @@ public class Checkout {
 		printReceipt.printReceipt();
 	}
 }
-		
-	}
-	
-	public void branchToPayWithBankNote()
-	{
-		
-	}
-	
-	
-	//Calls printReceipt method in ShoppingCartReceiptPrinter class 
-	//This will print the receipt of the transaction
-	public void printReceipt()
-	{
-		printReceipt.printReceipt();
-	}
-
-}
