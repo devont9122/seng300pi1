@@ -12,13 +12,13 @@ import org.lsmr.selfcheckout.devices.observers.BarcodeScannerObserver;
 import org.lsmr.selfcheckout.products.BarcodedProduct;
 
 public class CustomerScansItem implements BarcodeScannerObserver {
-	public SelfCheckoutStation station ;
+	public SelfCheckoutStation station ;   //????
 	public ShoppingCart shopCart = ShoppingCart.Instance;
-	public ProductDatabase database;
+	public ProductDatabase database = ProductDatabase.Instance;
 	
 
 	
-	
+	public CustomerScansItem() {}
 	/**
 	 * An event announcing that the indicated barcode has been successfully scanned.
 	 * 
@@ -36,6 +36,7 @@ public class CustomerScansItem implements BarcodeScannerObserver {
 		//barcode does not map to a product, discrepancy
 		else {	
 			barcodeScanner.disable();
+			return;
 		}
 		
 		//waits 5 seconds for customer to place item into bagging area before getting weight for product
