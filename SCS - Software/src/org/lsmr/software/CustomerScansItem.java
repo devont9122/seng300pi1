@@ -1,5 +1,6 @@
 package org.lsmr.software;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.lsmr.selfcheckout.Barcode;
@@ -16,9 +17,11 @@ public class CustomerScansItem implements BarcodeScannerObserver {
 	public ShoppingCart shopCart = ShoppingCart.Instance;
 	public ProductDatabase database = ProductDatabase.Instance;
 	
-
+	private Map<Barcode, Integer> scanStatus;
+	
 	
 	public CustomerScansItem() {}
+	
 	/**
 	 * An event announcing that the indicated barcode has been successfully scanned.
 	 * 
@@ -29,6 +32,19 @@ public class CustomerScansItem implements BarcodeScannerObserver {
 	 */
 	public void barcodeScanned(BarcodeScanner barcodeScanner, Barcode barcode) {
 		
+		if (scanStatus.get(barcode) == null) {
+			scanStatus.put(barcode, 1);
+		}
+		else {
+			Integer quantity = scanStatus.get(barcode);
+			scanStatus.replace(barcode, quantity + 1 );
+		}
+		
+		scanItem(barcodeScanner, barcode);
+		
+	};
+	
+	public void scanItem(BarcodeScanner barcodeScanner, Barcode barcode) {
 		BarcodedProduct product = null;
 		if (database.LookupItemViaBarcode(barcode) != null) {
 			product = database.LookupItemViaBarcode(barcode);
@@ -57,8 +73,16 @@ public class CustomerScansItem implements BarcodeScannerObserver {
 		float productWeight = getItemWeightFromBaggingArea();
 		shopCart.Add(product, productWeight);
 		
-		
-	};
+	}
+	
+	
+	public Integer getScanStatus(Barcode barcode) {
+		return scanStatus.get(barcode);
+	}
+	
+	public void emptyStatus() {
+		scanStatus.clear();
+	}
 	
 	
 	/*
