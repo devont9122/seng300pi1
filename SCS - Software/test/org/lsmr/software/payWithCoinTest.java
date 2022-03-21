@@ -22,7 +22,7 @@ public class payWithCoinTest {
         
         testCoinPayment.accept(testCoin);
        
-        assertEquals(new BigDecimal(5), testCoinPayment.value);
+        assertEquals(new BigDecimal(5), testCoinPayment.totalPaid);
     }
  	
  	@Test
@@ -46,7 +46,7 @@ public class payWithCoinTest {
         
         testCoinPayment.accept(testCoin);
        
-        assertEquals(new BigDecimal(0), testCoinPayment.value);
+        assertEquals(new BigDecimal(0), testCoinPayment.totalPaid);
         
     }
     

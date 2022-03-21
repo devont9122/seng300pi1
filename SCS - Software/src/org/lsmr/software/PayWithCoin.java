@@ -18,7 +18,7 @@ public class PayWithCoin {
 	public boolean fullStorage = false;
 	private BigDecimal coinValue = BigDecimal.ZERO;
 	
-	public BigDecimal value = BigDecimal.ZERO;
+	public BigDecimal totalPaid = BigDecimal.ZERO;
 	
 	public PayWithCoin(SelfCheckoutStation station) {
 		this.station = station;
@@ -35,7 +35,7 @@ public class PayWithCoin {
     }*/
 	
 	private void coinAccepted() {
-		value = value.add(coinValue);
+		totalPaid = totalPaid.add(coinValue);
 	}
 	
 	public CoinValidatorObserver observeCoin = new CoinValidatorObserver() {

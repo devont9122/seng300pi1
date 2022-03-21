@@ -13,12 +13,19 @@ import org.lsmr.selfcheckout.products.Product;
 
 public class Checkout {
 	
-	private SelfCheckoutStation CheckoutStation;
+	private SelfCheckoutStation station;
 	//private Product product;
 	
 	PayWithCoin coinPayment = new PayWithCoin();
 	payWithBankNote banknotePayment = new payWithBankNote();
 	ShoppingCartReceiptPrinter printReceipt = new ShoppingCartReceiptPrinter(CheckoutStation);
+	
+	public Checkout(SelfCheckoutStation station) {
+		this.station = station;
+		coinPayment = new PayWithCoin(station);
+		banknotePayment = new payWithBankNote();
+		printReceipt = new ShoppingCartReceiptPrinter(station); 
+	}
 
 	//BigDecimal paymentTotal = paymentTracker.getPaidAmount();
 	
