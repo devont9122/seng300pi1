@@ -16,23 +16,34 @@ public class PayWithCoin {
 	public SelfCheckoutStation station;
 	public boolean coinValidity = false;
 	public boolean fullStorage = false;
+	private BigDecimal coinValue = BigDecimal.ZERO;
 	
-	public BigDecimal value = new BigDecimal(0);
+	public BigDecimal value = BigDecimal.ZERO;
 	
-	public void accept(Coin coin)
+	public PayWithCoin(SelfCheckoutStation station) {
+		this.station = station;
+		station.coinValidator.attach(observeCoin);
+		station.coinStorage.attach(observeStorage);
+	}
+	
+	/*public void accept(Coin coin)
     {
         if(coinValidity == true && fullStorage == false)
         {
             value = coin.getValue();
         }
-    }
+    }*/
+	
+	private void coinAccepted() {
+		value = value.add(coinValue);
+	}
 	
 	public CoinValidatorObserver observeCoin = new CoinValidatorObserver() {
 
 		@Override
 		public void validCoinDetected(CoinValidator validator, BigDecimal value) {
 			coinValidity = true;
-			
+			coinValue = value;
 		}
 
 		@Override
@@ -82,7 +93,7 @@ public class PayWithCoin {
 		@Override
 		public void coinAdded(CoinStorageUnit unit) {
 			// TODO Auto-generated method stub
-			
+			coinAccepted();
 		}
 
 		@Override
