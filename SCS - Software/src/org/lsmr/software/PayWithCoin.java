@@ -2,102 +2,95 @@ package org.lsmr.software;
 
 import java.math.BigDecimal;
 
-import org.lsmr.selfcheckout.Banknote;
 import org.lsmr.selfcheckout.Coin;
 import org.lsmr.selfcheckout.devices.AbstractDevice;
-import org.lsmr.selfcheckout.devices.CoinSlot;
 import org.lsmr.selfcheckout.devices.CoinStorageUnit;
-import org.lsmr.selfcheckout.devices.CoinTray;
 import org.lsmr.selfcheckout.devices.CoinValidator;
 import org.lsmr.selfcheckout.devices.SelfCheckoutStation;
 import org.lsmr.selfcheckout.devices.observers.AbstractDeviceObserver;
-import org.lsmr.selfcheckout.devices.observers.CoinSlotObserver;
 import org.lsmr.selfcheckout.devices.observers.CoinStorageUnitObserver;
-import org.lsmr.selfcheckout.devices.observers.CoinTrayObserver;
 import org.lsmr.selfcheckout.devices.observers.CoinValidatorObserver;
 
-public class PayWithCoin implements AbstractDeviceObserver, CoinStorageUnitObserver, CoinValidatorObserver, CoinSlotObserver, CoinTrayObserver {
+public class PayWithCoin {
 
+	public SelfCheckoutStation station;
 	public boolean coinValidity = false;
-    private SelfCheckoutStation CheckoutStation;
-    
-    //Constructor
-    public PayWithCoin(SelfCheckoutStation station) {
-        CheckoutStation=station;
+	public boolean fullStorage = false;
+	
+	public BigDecimal value = new BigDecimal(0);
+	
+	public void accept(Coin coin)
+    {
+        if(coinValidity == true && fullStorage == false)
+        {
+            value = coin.getValue();
+        }
     }
-    public BigDecimal value = BigDecimal.valueOf(0);
-    public boolean valid = false;
-	public boolean isFull = false;
 	
-	
-	
-	
-	/* EXPERIMENTAL trying to figure out why the coinValidator isn't working
-	 * // System accepts a coin
-    public void accept(Coin coin)
-	{
-		if(valid == true && isFull == false)
-		{
-			value = (coin.getValue());
+	public CoinValidatorObserver observeCoin = new CoinValidatorObserver() {
+
+		@Override
+		public void validCoinDetected(CoinValidator validator, BigDecimal value) {
+			coinValidity = true;
+			
 		}
-	}
-    */
-    @Override
-    public void invalidCoinDetected(CoinValidator validator) {
-    	//
-    }
-    
-    @Override
-    public void validCoinDetected(CoinValidator validator, BigDecimal value) {
-        coinValidity = true;
-    }
 
-    
-    /*
-     * 
-     * Existing classes handles everything from this point on
-     * 
-     */
-    
-    @Override
-    public void coinAdded(CoinStorageUnit unit) {
-        // This is handled by coinStorageUnit class
-    }
-    @Override
-    public void coinsFull(CoinStorageUnit unit) {
-        // This is handled by the coinStorageUnit class
-    }
+		@Override
+		public void invalidCoinDetected(CoinValidator validator) {
+			coinValidity = false;
+			
+		}
+		
+		@Override
+		public void enabled(AbstractDevice<? extends AbstractDeviceObserver> device) {
+			// TODO Auto-generated method stub
+			
+		}
 
-    @Override
-    public void coinsLoaded(CoinStorageUnit unit) {
-        // This is handled by the coinStorageUnit class
-    }
-
-    @Override
-    public void coinsUnloaded(CoinStorageUnit unit) {
-        // This is handled by the coinStorageUnit class
-    }
-
-    @Override
-    public void enabled(AbstractDevice<? extends AbstractDeviceObserver> device) {
-        // This is handled by AbstractDevice
-    }
-
-    @Override
-    public void disabled(AbstractDevice<? extends AbstractDeviceObserver> device) {
-        // This is handled by AbstractDevice
-    }
-
-    @Override
-    public void coinAdded(CoinTray tray) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void coinInserted(CoinSlot slot) {
-        // TODO Auto-generated method stub
-        
-    }
+		@Override
+		public void disabled(AbstractDevice<? extends AbstractDeviceObserver> device) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	};
 	
+	public CoinStorageUnitObserver observeStorage = new CoinStorageUnitObserver() {
+		@Override
+		public void coinsFull(CoinStorageUnit unit) {
+			fullStorage = true;
+			
+		}
+		
+		@Override
+		public void coinsUnloaded(CoinStorageUnit unit) {
+			fullStorage = false;
+		}
+
+		@Override
+		public void enabled(AbstractDevice<? extends AbstractDeviceObserver> device) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void disabled(AbstractDevice<? extends AbstractDeviceObserver> device) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void coinAdded(CoinStorageUnit unit) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void coinsLoaded(CoinStorageUnit unit) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	};
+
 }
