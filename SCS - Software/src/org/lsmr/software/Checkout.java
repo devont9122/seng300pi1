@@ -16,9 +16,9 @@ public class Checkout {
 	private SelfCheckoutStation station;
 	//private Product product;
 	
-	PayWithCoin coinPayment = new PayWithCoin();
-	payWithBankNote banknotePayment = new payWithBankNote();
-	ShoppingCartReceiptPrinter printReceipt = new ShoppingCartReceiptPrinter(CheckoutStation);
+	PayWithCoin coinPayment;
+	payWithBankNote banknotePayment;
+	ShoppingCartReceiptPrinter printReceipt;
 	
 	public Checkout(SelfCheckoutStation station) {
 		this.station = station;
@@ -40,7 +40,10 @@ public class Checkout {
 	
 	public void branchToPayWithcoin()
 	{
-		
+		BigDecimal totalPrice = ShoppingCart.getInstance().getTotalPrice();
+		while(coinPayment.totalPaid.compareTo(totalPrice) == -1) {
+			// Wait?
+		}
 	}
 	
 	public void branchToPayWithBankNote()
