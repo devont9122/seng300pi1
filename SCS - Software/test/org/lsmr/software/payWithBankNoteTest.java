@@ -16,11 +16,38 @@ import org.junit.*;
 
 public class payWithBankNoteTest{
 	
-	public payWithBankNote test = new payWithBankNote();
+	public payWithBankNote test;
    
- 	public Currency cTest = Currency.getInstance("CAD");
+ 	public Currency cTest = SelfCheckoutStationSetup.currency;
+ 	
+ 	SelfCheckoutStation station;
+ 	
+ 	@Before
+ 	public void setUp() {
+ 		station = SelfCheckoutStationSetup.createSelfCheckoutStationFromInit();
+ 		
+ 		test = new payWithBankNote(station);
+ 	}
+ 	
+ 	@Test
+ 	public void testBanknotePaid() {
+ 		Banknote bn = new Banknote(cTest, 5);
+ 		
+ 		try {
+ 			station.banknoteInput.accept(bn);
+ 			
+ 			assertEquals("Banknote was not paid.", new BigDecimal(5), test.totalPaid);
+ 		}
+ 		catch(DisabledException e) {
+ 			e.printStackTrace();
+ 		} catch (OverloadException e) {
+			e.printStackTrace();
+		}
+ 		
+ 		
+ 	}
 	
-    @Test
+    /*@Test
     public void checkAccept()
     {
 
@@ -30,7 +57,7 @@ public class payWithBankNoteTest{
         
         test.accept(testNote);
        
-        assertEquals(BigDecimal.valueOf(5), test.value);
+        assertEquals(BigDecimal.valueOf(5), test.totalPaid);
     }
     
     @Test
@@ -45,7 +72,7 @@ public class payWithBankNoteTest{
         test.accept(testNote);
       
         
-        assertEquals(BigDecimal.valueOf(0), test.value);
+        assertEquals(BigDecimal.valueOf(0), test.totalPaid);
         
     }
     
@@ -116,7 +143,7 @@ public class payWithBankNoteTest{
         
         assertTrue(test.isFull == false);
         
-    }
+    }*/
     
     
 

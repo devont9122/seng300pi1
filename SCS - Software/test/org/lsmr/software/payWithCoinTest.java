@@ -37,8 +37,6 @@ public class payWithCoinTest {
  		catch(DisabledException e) {
  			e.printStackTrace();
  		}
- 		
- 		
  	}
  	
  	/*@Test

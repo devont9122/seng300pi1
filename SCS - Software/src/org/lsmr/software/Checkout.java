@@ -23,7 +23,7 @@ public class Checkout {
 	public Checkout(SelfCheckoutStation station) {
 		this.station = station;
 		coinPayment = new PayWithCoin(station);
-		banknotePayment = new payWithBankNote();
+		banknotePayment = new payWithBankNote(station);
 		printReceipt = new ShoppingCartReceiptPrinter(station);
 	}
 
@@ -49,7 +49,12 @@ public class Checkout {
 
 	public void branchToPayWithBankNote()
 	{
-		payment.add(banknotePayment.value);
+		//payment.add(banknotePayment.totalPaid);
+		BigDecimal totalPrice = ShoppingCart.getInstance().getTotalPrice();
+		banknotePayment.totalPaid = BigDecimal.ZERO;
+		while(banknotePayment.totalPaid.compareTo(totalPrice) == -1) {
+			// Wait?
+		}
 	}
 	//Calls printReceipt method in ShoppingCartReceiptPrinter class
 	//This will print the receipt of the transaction

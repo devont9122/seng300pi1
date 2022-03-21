@@ -32,7 +32,7 @@ public class paymentTracker {
 	
 	// Call this method to update paid amount in the observers
 	public void addPayment() {
-		this.paidAmount = this.paidAmount.add(payingWithBankNote.value);
+		this.paidAmount = this.paidAmount.add(payingWithBankNote.totalPaid);
 		this.paidAmount = this.paidAmount.add(payingWithCoin.totalPaid);
 	}
 }
