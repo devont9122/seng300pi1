@@ -2,6 +2,8 @@ package org.lsmr.software;
 
 import java.math.BigDecimal;
 
+import org.lsmr.selfcheckout.Banknote;
+import org.lsmr.selfcheckout.Coin;
 import org.lsmr.selfcheckout.devices.AbstractDevice;
 import org.lsmr.selfcheckout.devices.CoinSlot;
 import org.lsmr.selfcheckout.devices.CoinStorageUnit;
@@ -23,8 +25,23 @@ public class PayWithCoin implements AbstractDeviceObserver, CoinStorageUnitObser
     public PayWithCoin(SelfCheckoutStation station) {
         CheckoutStation=station;
     }
-    
-    
+    public BigDecimal value = BigDecimal.valueOf(0);
+    public boolean valid = false;
+	public boolean isFull = false;
+	
+	
+	
+	
+	/* EXPERIMENTAL
+	 * // System accepts a coin
+    public void accept(Coin coin)
+	{
+		if(valid == true && isFull == false)
+		{
+			value = (coin.getValue());
+		}
+	}
+    */
     @Override
     public void invalidCoinDetected(CoinValidator validator) {
     	//
