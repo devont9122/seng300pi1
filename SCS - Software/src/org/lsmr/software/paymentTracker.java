@@ -5,7 +5,6 @@ import java.util.Currency;
 import java.util.Locale;
 
 import org.lsmr.selfcheckout.Coin;
-import org.lsmr.selfcheckout.devices.DisabledException;
 import org.lsmr.selfcheckout.devices.SelfCheckoutStation;
 
 public class paymentTracker {
@@ -20,7 +19,7 @@ public class paymentTracker {
 	
 	//Initializing Devices
 	private SelfCheckoutStation station = new SelfCheckoutStation(currency, bankNoteDenominations, coinDenominations, 1, 1);
-	public PayWithCoin payingWithCoin = new PayWithCoin(station);
+	public PayWithCoin payingWithCoin = new PayWithCoin();
 	public payWithBankNote payingWithBankNote = new payWithBankNote();
 	
 	
