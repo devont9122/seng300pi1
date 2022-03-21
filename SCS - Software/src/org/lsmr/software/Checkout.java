@@ -41,6 +41,7 @@ public class Checkout {
 	public void branchToPayWithcoin()
 	{
 		BigDecimal totalPrice = ShoppingCart.getInstance().getTotalPrice();
+		coinPayment.totalPaid = BigDecimal.ZERO; // Reset total amount paid
 		while(coinPayment.totalPaid.compareTo(totalPrice) == -1) {
 			// Wait?
 		}
