@@ -32,7 +32,7 @@ public class PayWithCoin implements AbstractDeviceObserver, CoinStorageUnitObser
 	
 	
 	
-	/* EXPERIMENTAL
+	/* EXPERIMENTAL trying to figure out why the coinValidator isn't working
 	 * // System accepts a coin
     public void accept(Coin coin)
 	{
