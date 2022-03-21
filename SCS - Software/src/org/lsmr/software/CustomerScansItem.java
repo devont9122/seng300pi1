@@ -18,6 +18,8 @@ public class CustomerScansItem implements BarcodeScannerObserver {
 	public ShoppingCart shopCart;
 	public ProductDatabase database;
 	
+	//To use to determine if item was scanned or not (not necessarily added to cart), 
+	//or in the case of multiple quantities of the same item
 	private Map<Barcode, Integer> scanStatus = new HashMap<>();
 	
 	
@@ -50,12 +52,20 @@ public class CustomerScansItem implements BarcodeScannerObserver {
 		
 	};
 	
+	/*
+	 * A scanned item is checked for corresponding product in system and added to cart
+	 * 
+	 * @param barcodeScanner
+	 *            The device on which the event occurred.
+	 * @param barcode
+	 *            The barcode that was read by the scanner.
+	 */
 	public void scanItem(BarcodeScanner barcodeScanner, Barcode barcode) {
 		BarcodedProduct product = null;
 		if (database.LookupItemViaBarcode(barcode) != null) {
 			product = database.LookupItemViaBarcode(barcode);
 		}
-		//barcode does not map to a product, discrepancy
+		//a barcode that does not map to a product leads to a discrepancy
 		if(database.LookupItemViaBarcode(barcode) == null) {	
 			barcodeScanner.disable();
 			return;
@@ -65,7 +75,14 @@ public class CustomerScansItem implements BarcodeScannerObserver {
 		
 	}
 	
-	
+	/*
+	 * To get quanity of scanned item
+	 * 
+	 * @param barcode
+	 *            The barcode that was read by the scanner.
+	 * @return 
+	 * 			Number of times a barcode was scanned
+	 */
 	public Integer getScanStatus(Barcode barcode) {
 		return scanStatus.get(barcode);
 	}
@@ -77,6 +94,9 @@ public class CustomerScansItem implements BarcodeScannerObserver {
 	
 	/*
 	 * To override a block due to a scanning discrepancy
+	 * 
+	 *  @param barcodeScanner
+	 *            The device on which the event occurred.
 	 */
 	public void overrideBlock(BarcodeScanner barcodeScanner) {
 		barcodeScanner.enable();

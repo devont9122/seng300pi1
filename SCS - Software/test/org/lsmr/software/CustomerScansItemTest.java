@@ -21,19 +21,13 @@ import org.lsmr.selfcheckout.products.BarcodedProduct;
 import org.lsmr.selfcheckout.products.Product;
 import org.lsmr.software.ShoppingCart.ShoppingCartEntry;
 
-class ItemStub extends Item{
-	ItemStub(double weightInGrams){
-		super(weightInGrams);
-	}
-}
-
 
 
 
 public class CustomerScansItemTest {
 	
 	CustomerScansItem scan;
-	
+	//Set up for the self checkout station
 	ProductDatabase database = ProductDatabase.Instance;
 	ShoppingCart cart = ShoppingCart.Instance;
 	Currency currency = Currency.getInstance("CAD");
@@ -46,8 +40,7 @@ public class CustomerScansItemTest {
 	public void setUp() {
 		scan = new CustomerScansItem(station, cart, database);
 		station.scanner.attach(scan);
-		station.scanner.enable();
-		station.scale.enable();
+		station.scanner.enable();;
 		
 		cart.Empty();
 		scan.emptyStatus();
@@ -55,6 +48,7 @@ public class CustomerScansItemTest {
 	
 	}
 	
+	//Should block scanning if item barcode does not have corresponding product in system
 	@Test
 	public void barcodeHasNoProductTest() {
 		Numeral[] n = {Numeral.one, Numeral.two, Numeral.three};
@@ -63,17 +57,11 @@ public class CustomerScansItemTest {
 		station.scanner.scan(item);
 	
 		assertTrue(station.scanner.isDisabled());
-	
-		
-		scan.emptyStatus();
-	}
-	
-	@Test
-	public void waitingInterruptedTest() {
-		
 		
 	}
 	
+	
+	//Should add product to cart if item barcode matches product barcode in system
 	@Test
 	public void addProductToCartTest() {
 		Numeral[] n = {Numeral.one, Numeral.two, Numeral.three};
@@ -84,19 +72,14 @@ public class CustomerScansItemTest {
 		database.RegisterProducts(product);
 		
 		station.scanner.scan(item);
-		station.scale.add(item);
 		
 		
-		 List<ShoppingCartEntry> cartEntries = cart.getEntries();
-		 assertFalse(cartEntries.isEmpty());
-		 
-		 cart.Empty();
-		 scan.emptyStatus();
-		 station.scale.remove(item);
-	
-		
+		List<ShoppingCartEntry> cartEntries = cart.getEntries();
+		assertFalse(cartEntries.isEmpty());
+		 	
 	}
 	
+	//Further scanning after a block should not be permitted
 	@Test
 	public void addProductToCartAfterBlockTest() {
 		Numeral[] n1 = {Numeral.one, Numeral.two, Numeral.three};
@@ -111,12 +94,11 @@ public class CustomerScansItemTest {
 		
 		assertEquals(scan.getScanStatus(b2), null);
 		
-		cart.Empty();
-		scan.emptyStatus();
 	}
 	
+	//Item with the same barcode should be able to be scanned multiple times
 	@Test
-	public void scanDuplicateProducts() {     //this tests scanner rather than CustomerScansItem lol
+	public void scanDuplicateProducts() {    
 		Numeral[] n1 = {Numeral.one, Numeral.two, Numeral.three};
 		Barcode b1 = new Barcode(n1);
 		BarcodedItem item1 = new BarcodedItem(b1, 2.0);
@@ -125,23 +107,15 @@ public class CustomerScansItemTest {
 		
 		BarcodedItem item2 = new BarcodedItem(b1, 2.0);
 		
-		
 		station.scanner.scan(item1);
-		station.scale.add(item1);
-	
-		station.scale.remove(item1);
-		
 		
 		station.scanner.scan(item2);
-		station.scale.add(item2);
-		
-		station.scale.remove(item2);
 		
 		assertEquals(cart.getEntries().size(), 2);
-		cart.Empty();
-		scan.emptyStatus();
+		
 	}
 	
+	//Scanning should work properly after a block override
 	@Test
 	public void scanAfterBlockOveriddenTest() {
 		station.scanner.disable();
@@ -155,55 +129,17 @@ public class CustomerScansItemTest {
 		database.RegisterProducts(product);
 		
 		station.scanner.scan(item);
-		station.scale.add(item);
 		
-		 List<ShoppingCartEntry> cartEntries = cart.getEntries();
+		
+		List<ShoppingCartEntry> cartEntries = cart.getEntries();
 	
-		 assertFalse(cartEntries.isEmpty());
-		
-		 cart.Empty();
-		 station.scale.remove(item);
+		assertEquals(cartEntries.size(), 1);
+			
+	 
 	}
 	
-	/*
-	@Test
-	public void itemNotAddedToBaggingAreaTest() {
-		Numeral[] n = {Numeral.one, Numeral.two, Numeral.three};
-		Barcode b = new Barcode(n);
-		BarcodedItem item = new BarcodedItem(b, 2.0);
-		
-		BarcodedProduct product = new BarcodedProduct(b, "a product", BigDecimal.valueOf(1.99));
-		database.RegisterProducts(product);
-		
-		station.scanner.scan(item);
 	
-		assertTrue(station.scanner.isDisabled());
-		
-		scan.emptyStatus();
-	}
-	*/
-	
-	/*
-	@Test(expected = OverloadException.class)
-	public void currentWeightOverLimitTest() throws OverloadException {
-		ItemStub item = new ItemStub(15.0);
-		station.scale.add(item);
-		scan.getItemWeightFromBaggingArea();
-		station.scale.remove(item);
-	}
-	*/
-	/*
-	@Test
-	public void itemWeightCalculatedTest() {
-		ItemStub item = new ItemStub(5.0);
-		station.scale.add(item);
-		float weight = scan.getItemWeightFromBaggingArea();
-		assertEquals(weight, 5.0f, 0.001);
-		station.scale.remove(item);
-		
-	}
-	*/
-	
+	//Multiple items should be able to be scanned and put into the shopping cart
 	@Test
 	public void multipleProductTest() {
 		Numeral[] n = {Numeral.one, Numeral.two, Numeral.three};
@@ -225,9 +161,6 @@ public class CustomerScansItemTest {
 		station.scanner.scan(item1);
 
 		assertEquals(cart.getEntries().size(), 2);
-	
-		cart.Empty();
-		scan.emptyStatus();
 		
 		
 	}
